@@ -19,7 +19,6 @@
  */
 
 // const HDWalletProvider = require('@truffle/hdwallet-provider');
-// const infuraKey = "fj4jll3k.....";
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -89,7 +88,7 @@ module.exports = {
       //    enabled: false,
       //    runs: 200
       //  },
-      //  evmVersion: "byzantium"
+      evmVersion: "byzantium"
       // }
     }
   },
