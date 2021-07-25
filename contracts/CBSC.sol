@@ -7,11 +7,11 @@ contract CBSC {
         =========================================================
 
         Commitment Based Smart Contracts
-        v.0.1
+        Prototype for PhD dissertation
         
         Joost de Kruijff
         j.c.dekruijff@tilburguniversity.edu
-        https://github.com/codeoffconduct/CBSC/blob/main/CBSC.sol
+        https://github.com/codeoffconduct/CBSC
 
         =========================================================
     */
@@ -24,7 +24,7 @@ contract CBSC {
         - Arrays to store the struct objects in order to work with initiated commitments, events and fluents
     */
 
-    // address variable defining the owner 
+    // address variable defining the owner
     address internal owner = msg.sender;
     
     //Swap roles during assignment and delegation
