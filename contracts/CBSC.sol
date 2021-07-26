@@ -99,31 +99,26 @@ contract CBSC {
         - Use web3 library to interact with events and setup listeners
     */
 
-    // Trigger event to notify outside code that a new commitment is created
-    event CommitmentCreated(
-    //output the commitment details
-        string, string, string, string
-    );
-
-    // Trigger event to notify outside code that an existing commitment is activated
-    event Activate(
-    //output the commitment details
-        string, string, string, string
-    );
-
-    // Trigger event to notify outside code that an existing commitment is terminated
-    event Terminate(
-    //output the commitment details
-        string, string, string, string
-    );
-
     // Trigger event to notify outside code that a new event is created
-    event EventCreated(
+    event EventStateEvent(
     //output the commitment details
         string, string
     );
 
-    event ProtocolRun(string, string);
+    // Trigger event to notify outside code that a new event is created
+    event FluentStateEvent(
+    //output the commitment details
+        string, string
+    );
+
+    // Trigger event to notify outside code that a new commitment is created
+    event CommitmentStateEvent(
+    //output the commitment details
+        string, string, string, string
+    );
+
+    // Show all state changes on the ledger
+    event ProtocolRun(string, string, uint);
 
     /*
         Create Functions
@@ -151,8 +146,25 @@ contract CBSC {
         }));
 
         // Notify event triggers of new commitment
-        emit CommitmentCreated(time, type_, category, title);
+        emit CommitmentStateEvent(time, type_, category, title);
+    }
 
+    // Create a Commitment
+    function updateCommitment(
+        string memory time,
+        uint index_,
+        string memory title) external onlyOwner
+    {
+        commitments.push(Commitment({
+        _time : time,
+        _type : commitments[index][_type],
+        _category : commitments[index][_category],
+        _title : commitments[index][title],
+        _state : CommitmentState.Activated
+        }));
+
+        // Notify event triggers of new commitment
+        emit CommitmentStateEvent(time, type_, category, title);
     }
 
     //create an Event
@@ -164,7 +176,7 @@ contract CBSC {
         }));
 
         // Notify event triggers of new event
-        emit EventCreated(time, title);
+        emit EventStateEvent(time, title);
     }
 
     //create an Event
@@ -184,7 +196,7 @@ contract CBSC {
     function protocolRun() external {
         for (uint i = 0; i < events.length; i++) {
             emit ProtocolRun(events[i]._time, events[i]._title);
-            emit ProtocolRun(commitments[i]._time, commitments[i]._title);
+            emit ProtocolRun(commitments[i]._time, commitments[i]._title, commitments[i]);
         }
 
     }
