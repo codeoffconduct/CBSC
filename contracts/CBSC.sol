@@ -37,11 +37,15 @@ contract CBSC {
     enum FluentState {NonFulfilled, PartialFulfilled, Fulfilled}
     enum CommitmentState {Committed, Activated, Terminated}
 
+    // Non-state enums
+    enum CommitmentType {BC, CC}
+    enum CommitmentCategory {Exchange, Control}
+
     // Commitment struct
     struct Commitment {
         string _time;
-        string _type;
-        string _category;
+        CommitmentType _type;
+        CommitmentCategory _category;
         string _title;
         CommitmentState _state;
     }
@@ -100,21 +104,21 @@ contract CBSC {
     */
 
     // Trigger event to notify outside code that a new event is created
-    event EventStateEvent(
+    event EventStateLog(
     //output the commitment details
         string, string
     );
 
     // Trigger event to notify outside code that a new event is created
-    event FluentStateEvent(
+    event FluentStateLog(
     //output the commitment details
         string, string
     );
 
     // Trigger event to notify outside code that a new commitment is created
-    event CommitmentStateEvent(
+    event CommitmentStateLog(
     //output the commitment details
-        string, string, string, string
+        string
     );
 
     // Show all state changes on the ledger
@@ -129,14 +133,20 @@ contract CBSC {
         owner = msg.sender;
     }
 
+    function Test(string memory test) external {
+        string memory a = test;
+        emit CommitmentStateLog(test);
+    }
+
 
     // Create a Commitment
-    function createCommitment(
+    function Commit(
         string memory time,
-        string memory type_,
-        string memory category,
+        CommitmentType type_,
+        CommitmentCategory category,
         string memory title) external onlyOwner
     {
+
         commitments.push(Commitment({
         _time : time,
         _type : type_,
@@ -146,29 +156,44 @@ contract CBSC {
         }));
 
         // Notify event triggers of new commitment
-        emit CommitmentStateEvent(time, type_, category, title);
+        emit CommitmentStateLog(time);
     }
 
-    // Create a Commitment
-    function updateCommitment(
+    // Modify the state of an existing commitment
+    function Activate(
         string memory time,
         uint index_,
         string memory title) external onlyOwner
     {
-        commitments.push(Commitment({
-        _time : time,
-        _type : commitments[index][_type],
-        _category : commitments[index][_category],
-        _title : commitments[index][title],
-        _state : CommitmentState.Activated
-        }));
-
-        // Notify event triggers of new commitment
-        emit CommitmentStateEvent(time, type_, category, title);
+        //        commitments.push(Commitment({
+        //        _time : time,
+        //        _type : commitments[index_][_type],
+        //        _category : commitments[index_][_category],
+        //        _title : commitments[index_][title],
+        //        _state : CommitmentState.Activated
+        //        }));
+        //
+        //        // Notify event triggers of new commitment
+        //        emit CommitmentStateLog(time, type_, category, title);
     }
 
-    //create an Event
-    function createEvent(string memory time, string memory title) external onlyOwner {
+    // Delegate a commitment
+    function Delegate() external onlyOwner {}
+
+    // Assign a commitment
+    function Assign() external onlyOwner {}
+
+    // Discharge a commitment
+    function Discharge() external onlyOwner {}
+
+    // Discharge a commitment
+    function Cancel() external onlyOwner {}
+
+    // Discharge a commitment
+    function Release() external onlyOwner {}
+
+    // Create an Event
+    function EventBuilder(string memory time, string memory title) external onlyOwner {
         events.push(Event({
         _time : time,
         _title : title,
@@ -176,11 +201,11 @@ contract CBSC {
         }));
 
         // Notify event triggers of new event
-        emit EventStateEvent(time, title);
+        emit EventStateLog(time, title);
     }
 
-    //create an Event
-    function createFluent(string memory time, string memory title) external onlyOwner {
+    // Create a fluent
+    function FluentBuilder(string memory time, string memory title) external onlyOwner {
         fluents.push(Fluent({
         _title : title,
         _time : time,
@@ -192,14 +217,16 @@ contract CBSC {
         Query Functions
     */
 
-    //query entire protocol run
-    function protocolRun() external {
-        for (uint i = 0; i < events.length; i++) {
-            emit ProtocolRun(events[i]._time, events[i]._title);
-            emit ProtocolRun(commitments[i]._time, commitments[i]._title, commitments[i]);
-        }
+    // Query state changes of the ledger
+    //    function State() external {
+    //        for (uint i = 0; i < events.length; i++) {
+    //            emit ProtocolRun(events[i]._time, events[i]._title);
+    //            emit ProtocolRun(commitments[i]._time, commitments[i]._title, commitments[i]);
+    //        }
+    //    }
 
-    }
+    // Query the latest state in the protocol run
+    function StateSummary() external {}
 
     function onTime(string memory t) external view returns (string memory TimeIs, string memory EventTitleIs, string memory CommitmentTitleIs){
         string memory eventOnT;
